@@ -1,0 +1,53 @@
+/*void read_rom(unsigned char* info){
+//unsigned char info[8];
+int i=0;
+int j=0;
+therm_reset(); 
+therm_write_byte(THERM_CMD_READROM);
+
+for(i;i<8;i++)
+{
+  info[i]=therm_read_byte();
+}
+i=0;
+LCD_CLEAR_DISPLAY();
+/*if(calc_CRC(info))
+LCD_printstring("TRUE\n");
+else 
+LCD_printstring("FALSE\n");
+Delay_ms(3000);*/
+/*for(j;j<8;j++)
+{
+for(i;i<8;i++)
+{
+if((info[j])& 1<<(7-i))
+LCD_printchar('1');
+else
+LCD_printchar('0');
+}
+Delay_ms(3000);
+LCD_CLEAR_DISPLAY();
+i=0;
+}
+}
+*/
+/*bool calc_CRC(unsigned char* e)
+{
+  u16 crc=0x131;
+  u16 ret;
+  u16 t;
+  u8 i=9;
+  t=*e>>52;
+  while(i<52)
+  {
+  ret=t^crc;
+  while(!(ret>>8))
+  {
+    ret<<1;
+    t=*e<<++i;
+    ret|= t&0x01;
+    t=ret;
+  }
+    }
+  return (ret==(*e&0xff))? TRUE : FALSE;
+}*/
