@@ -1,0 +1,6 @@
+*.o
+*.pbi
+*.pbd
+*.dep
+settings/
+Debug/Obj/

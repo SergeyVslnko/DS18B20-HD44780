@@ -19,7 +19,7 @@ BitStatus wire_init(void);
 bool therm_reset(void);
 void therm_init_mode(THERM_MODE mode);
 void therm_write_byte(unsigned char byte);
-static unsigned char therm_read_byte(void);
+unsigned char therm_read_byte(void);
 bool therm_read_bit(void);
 void therm_write_bit(bool bBit);
 char GetTemperature(void);

@@ -34,7 +34,7 @@ bool therm_reset(void)
   THERM_LOW(); 
   Delay_mks(480);
   THERM_INPUT_MODE();
-  Delay_mks(50);  //тут мы нашли нужную задержку
+  Delay_mks(100);  //тут мы нашли нужную задержку
   i = THERM_READ();
   return (i==0x00)? TRUE:FALSE;
 }
@@ -50,7 +50,7 @@ void therm_write_bit(bool bBit)
     THERM_INPUT_MODE();
   }
    
-   Delay_mks(100);  //60 to 100
+   Delay_mks(60);  //60 to 100
    
   THERM_INPUT_MODE();
 }
@@ -73,14 +73,14 @@ bool therm_read_bit(void)
  
   THERM_INPUT_MODE();
  
-   Delay_mks(100);  // тут я заменил 15 на 100
+   Delay_mks(30);  // тут я заменил 15 на 100
    
   if (THERM_READ()) 
   {
     bBit = TRUE;
   }
  
-   Delay_mks(100);
+   Delay_mks(60);
  
   return bBit;
 }
@@ -92,7 +92,7 @@ bool therm_read_bit(void)
   * @retval
   * Значение байта.
 */
-static unsigned char therm_read_byte(void)
+unsigned char therm_read_byte(void)
 {
   unsigned char i = 8;
   unsigned char n = 0;
@@ -218,13 +218,13 @@ volatile unsigned char* get_temperature( volatile unsigned char* t)
   pos=0;
   char iResult_int = 0;
   char iResult_float=0;
-  volatile  unsigned char temperature[9];
+  unsigned char temperature[9];
   short iReadLimit;
  
   
   u8 mode;
 
-  u8 mask;
+  //u8 mask;
   u16 tconv=750;
   disableInterrupts();  
    
@@ -237,8 +237,10 @@ volatile unsigned char* get_temperature( volatile unsigned char* t)
   therm_reset();
   therm_write_byte(THERM_CMD_SKIPROM);
   therm_write_byte(THERM_CMD_RSCRATCHPAD);
-  for(i=0;i<9;i++)
-    temperature[i]=therm_read_byte();
+  //for(i=0;i<9;i++)
+    temperature[0]=therm_read_byte();
+    temperature[1]=therm_read_byte();
+    
   mode=temperature[4]& 0x03;
 
   
@@ -276,8 +278,8 @@ volatile unsigned char* get_temperature( volatile unsigned char* t)
     t[pos++]='-' ;
   else
     t[pos++]='+';
-  i=0;
-  for(i;i<7;i++)     //получаем целую часть
+  //i=0;
+  for(i=0;i<7;i++)     //получаем целую часть
   {
    if(iResult_int & 1<<i)
     temp+=1<<(i);
@@ -285,9 +287,9 @@ volatile unsigned char* get_temperature( volatile unsigned char* t)
   
   itoa(temp,t);
   t[pos++]='.';
-  i=3;
+ // i=3;
   temp=0;
-  for(i;i>=0;i--)
+  for(i=3;i>=0;i--)
   {
     if(iResult_float & 1<<i) //получаем дробную часть
     temp+=500/(1<<(3-i));
@@ -304,25 +306,13 @@ return t;
 
 void itoa(int temp,volatile unsigned char* t)  
 {
-   if(temp/100)
-  {   switch(temp/100)
-   {
-                 case 1: t[pos++]='1'; break;
-	         case 2: t[pos++]='2'; break;
-	    	 case 3: t[pos++]='3'; break;
-	    	 case 4: t[pos++]='4'; break;
-	    	 case 5: t[pos++]='5'; break;
-	    	 case 6: t[pos++]='6'; break;
-	    	 case 7: t[pos++]='7'; break;
-	    	 case 8: t[pos++]='8'; break;
-	    	 case 9: t[pos++]='9'; break;
-    }
-     temp%=100;
-  }
-  if(temp/10)
+
+  char temp1=100;
+  while(1)
   {
-  switch(temp/10)
+     switch(temp/temp1)
    {
+                 case 0: t[pos++]='0'; break;     
                  case 1: t[pos++]='1'; break;
 	         case 2: t[pos++]='2'; break;
 	    	 case 3: t[pos++]='3'; break;
@@ -333,44 +323,36 @@ void itoa(int temp,volatile unsigned char* t)
 	    	 case 8: t[pos++]='8'; break;
 	    	 case 9: t[pos++]='9'; break;
     }
-   temp%=10;
-  }
- 
-  switch(temp)
-   {
-                 case 1: t[pos++]='1'; break;
-	         case 2: t[pos++]='2'; break;
-	    	 case 3: t[pos++]='3'; break;
-	    	 case 4: t[pos++]='4'; break;
-	    	 case 5: t[pos++]='5'; break;
-	    	 case 6: t[pos++]='6'; break;
-	    	 case 7: t[pos++]='7'; break;
-	    	 case 8: t[pos++]='8'; break;
-	    	 case 9: t[pos++]='9'; break;
+    if(temp1!=1)
+    {
+     temp%=temp1;
+     temp1/=10;
     }
+    else break;
+   }
   
 }
 
 
 void read_rom(){
 volatile unsigned char info[8];
-int i=0;
-int j=0;
+int i;
+int j;
 disableInterrupts();
 therm_reset(); 
 therm_write_byte(THERM_CMD_READROM);
-for(i;i<8;i++)
+for(i=0;i<8;i++)
 {
   info[i]=therm_read_byte();
 }
 enableInterrupts(); 
 
-i=0;
+//i=0;
 LCD_CLEAR_DISPLAY();
 
-for(j;j<8;j++)
+for(j=0;j<8;j++)
 {
-for(i;i<8;i++)
+for(i=0;i<8;i++)
 {
 if((info[j])& 1<<(7-i))
 LCD_printchar('1');
@@ -379,7 +361,7 @@ LCD_printchar('0');
 }
 Delay_ms(3000);
 LCD_CLEAR_DISPLAY();
-i=0;
+//i=0;
 }
 }
 
