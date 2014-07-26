@@ -19,7 +19,7 @@
 #define THERM_CMD_READROM 0x33
 #define THERM_CMD_MATCHROM 0x55
 #define THERM_CMD_ALARMSEARCH 0xEC
-
+// 2 changes
 
 volatile char iCurrentTemp = 0;
 u8 pos=0; //глобальный указатель для itoa();
