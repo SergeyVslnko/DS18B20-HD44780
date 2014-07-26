@@ -2,5 +2,7 @@
 *.pbi
 *.pbd
 *.dep
+*.pbd
+*.dni
 settings/
 Debug/Obj/

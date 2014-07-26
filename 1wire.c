@@ -155,7 +155,7 @@ void therm_init_mode(THERM_MODE mode)
   * @retval
   * Температура.
 */
-char GetTemperature(void)
+/*char GetTemperature(void)
 {
   char iResult = 0;
   volatile  unsigned char temperature[2] = {0, 0};
@@ -182,7 +182,7 @@ char GetTemperature(void)
   temperature[1] = therm_read_byte();
  
   // Разрешить прерывания
-  enableInterrupts();  
+  //enableInterrupts();  
  /*  int i=0;
    int j=0;
 for(j;j<2;j++)
@@ -197,7 +197,7 @@ LCD_printchar('0');
 Delay_ms(5000);
 LCD_CLEAR_DISPLAY();
 i=0;
-}*/
+}
   digit = 0;
  
   digit  = (  temperature[0]         >> 4 ) & 0x0F;  
@@ -219,7 +219,7 @@ i=0;
 
   return iResult;
 }
-
+*/
 volatile unsigned char* get_temperature( volatile unsigned char* t)
 {
   pos=0;
@@ -377,7 +377,7 @@ LCD_CLEAR_DISPLAY();
 }
 }
 
-/*bool calc_CRC(unsigned char* e)
+/*bool calc_CRC(unsigned char* e)  // не работает
 {
   u16 crc=0x131;
   u16 ret;

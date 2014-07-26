@@ -45,17 +45,9 @@
  
 
 
- // TIM3_PrescalerConfig(TIM3_PRESCALER_16384,TIM3_PSCRELOADMODE_UPDATE);
-  //TIM3_UpdateRequestConfig(TIM3_UPDATESOURCE_REGULAR);
+
   TIM3_SelectOnePulseMode(TIM3_OPMODE_SINGLE);
- // TIM3_ITConfig(TIM3_IT_UPDATE, ENABLE);
   GPIO_Configuration();
-
-    /* Configures clocks */
-
- // enableInterrupts();
-  
-  
  
 
     LCD_PWRON();
@@ -70,52 +62,17 @@
   TIM3_UpdateRequestConfig(TIM3_UPDATESOURCE_REGULAR);
   TIM3_SelectOnePulseMode(TIM3_OPMODE_SINGLE);
   TIM3_ITConfig(TIM3_IT_UPDATE, ENABLE);
-  GPIO_Init(Wire_Port, Wire_Pin,GPIO_MODE_OUT_OD_HIZ_SLOW); //GPIO_MODE_OUT_OD_HIZ_FAST
- // GPIO_Init(Wire_Port, PullUp_Pin,GPIO_MODE_OUT_PP_LOW_FAST);
- volatile unsigned char t[11];
+  GPIO_Init(Wire_Port, Wire_Pin,GPIO_MODE_OUT_OD_HIZ_SLOW);  
+  volatile unsigned char t[11];
  //therm_init_mode(THERM_MODE_12BIT);
   while(1)
   {
    LCD_LOCATE(1,1);
    LCD_printstring(get_temperature(t));
    Delay_ms(2000);
-//    else 
-//    {
-//      LCD_CLEAR_DISPLAY();
-//      LCD_printstring("offline\n");
-//    }
-  // Delay_ms(2000);
-  // LCD_CLEAR_DISPLAY();
-    //read_rom();
-//     THERM_LOW();
-////    nop(); nop(); nop(); nop();nop(); nop(); nop(); nop();nop(); nop(); nop(); nop();nop();
-//    Delay_ms(750);
-//     THERM_HIGH();
-////     nop(); nop(); nop(); nop();nop(); nop(); nop(); nop();nop(); nop(); nop(); nop();nop();
-//     Delay_ms(750);
-
-    // Delay_1muss();
  }
     
    
-}
-
-
-
-/**
-  ******************************************************************************
-  * @brief Configures clocks
-  * @par Parameters:
-  * None
-  * @retval void None
-  * @par Required preconditions:
-  * None
-  ******************************************************************************
-  */
-void CLK_Configuration(void)
-{
-  /* Fmaster = 16MHz */
-  CLK_HSIPrescalerConfig(CLK_PRESCALER_HSIDIV1);
 }
 
 /**
