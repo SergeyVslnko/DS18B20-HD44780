@@ -4,5 +4,6 @@
 *.dep
 *.pbd
 *.dni
-settings/
-Debug/Obj/
+*.txt
+settings\
+Debug\Obî\
