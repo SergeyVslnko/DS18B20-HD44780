@@ -1557,10 +1557,10 @@
     <name>$PROJ_DIR$\1wire.h</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\..\interfacing_hd44780_lcd_fw\AN4032\Projects\HD44780\src\delay.c</name>
+    <name>$PROJ_DIR$\delay.c</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\..\interfacing_hd44780_lcd_fw\AN4032\Projects\HD44780\inc\delay.h</name>
+    <name>$PROJ_DIR$\delay.h</name>
   </file>
   <file>
     <name>$PROJ_DIR$\..\interfacing_hd44780_lcd_fw\AN4032\Projects\HD44780\src\HD44780.c</name>

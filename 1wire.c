@@ -1,8 +1,8 @@
 #include "1wire.h"
 #include "HD44780.h"
 #include "stm8s.h"
-#define THERM_INPUT_MODE()  Wire_Port->DDR &= ~Wire_Pin
-#define THERM_OUTPUT_MODE() Wire_Port->DDR |=  Wire_Pin
+#define THERM_INPUT_MODE() Wire_Port->DDR &= ~Wire_Pin;   Wire_Port->CR2 &= (uint8_t)(~(Wire_Pin))
+#define THERM_OUTPUT_MODE() Wire_Port->DDR |=  Wire_Pin; Wire_Port->CR2 |= (uint8_t)Wire_Pin
 #define THERM_LOW()         Wire_Port->ODR &= (u8)(~Wire_Pin)
 #define THERM_HIGH()        Wire_Port->ODR |= (u8)Wire_Pin
 #define THERM_READ()        (Wire_Port->IDR & (u8)Wire_Pin)
@@ -29,30 +29,35 @@ bool therm_reset(void)
   unsigned char i = 0x08;
  
   THERM_OUTPUT_MODE();
- // THERM_HIGH();
-  //Delay_mks(10);
   THERM_LOW(); 
-  Delay_mks(480);
+  Delay_mks(500);
   THERM_INPUT_MODE();
   Delay_mks(100);  //тут мы нашли нужную задержку
+  //while(THERM_READ()){nop();}
   i = THERM_READ();
-  return (i==0x00)? TRUE:FALSE;
+   Delay_mks(500);
+  return 1;//(i==0x00)? TRUE:FALSE;
 }
 void therm_write_bit(bool bBit)
 {
   THERM_OUTPUT_MODE();
   THERM_LOW();
  
-   Delay_mks(1);
+ //  Delay_mks(3);
+  nop(); nop(); nop(); nop();
+  nop(); nop(); nop(); nop();
+  nop(); nop(); nop(); nop();
+  nop(); nop(); nop(); nop();
  
   if (bBit) 
   {
-    THERM_INPUT_MODE();
+    //THERM_INPUT_MODE();
+    THERM_HIGH();
   }
    
-   Delay_mks(60);  //60 to 100
+   Delay_mks(80);  //80 to 100 !!!!!!!!!!!!!!!!!!!!!!!!!
    
-  THERM_INPUT_MODE();
+  THERM_INPUT_MODE();   //!!!!!!!!!!!!!!!!
 }
  
 /**
@@ -69,18 +74,20 @@ bool therm_read_bit(void)
   THERM_OUTPUT_MODE();
   THERM_LOW(); 
  
-   Delay_mks(1);
- 
+ // Delay_mks(3);
+  nop(); nop(); nop(); nop();
+  nop(); nop(); nop(); nop();
+  nop(); nop(); nop(); nop();
+  nop(); nop(); nop(); nop();
   THERM_INPUT_MODE();
  
-   Delay_mks(30);  // тут я заменил 15 на 100
-   
+   Delay_mks(20);  // данные валидны через 15 мкс после начала слота
   if (THERM_READ()) 
   {
     bBit = TRUE;
   }
  
-   Delay_mks(60);
+   Delay_mks(60); ///!!!!!!!!!!!!!
  
   return bBit;
 }
@@ -122,7 +129,7 @@ void therm_write_byte(unsigned char byte)
     therm_write_bit(byte & 1);
     byte >>= 1;
   }  
-}
+ }
 
 
 /**
@@ -228,29 +235,34 @@ volatile unsigned char* get_temperature( volatile unsigned char* t)
   u16 tconv=750;
   disableInterrupts();  
    
-  therm_reset();
-  therm_write_byte(THERM_CMD_SKIPROM);
-  therm_write_byte(THERM_CMD_RECEEPROM);
- // Delay_mks(tconv);
-  while(!therm_read_bit()){};
+//therm_reset();
+// therm_write_byte(THERM_CMD_SKIPROM);
+// therm_write_byte(THERM_CMD_RECEEPROM);
+// Delay_mks(1000);
+//  while(!therm_read_bit()){};
   int i=0;
-  therm_reset();
-  therm_write_byte(THERM_CMD_SKIPROM);
-  therm_write_byte(THERM_CMD_RSCRATCHPAD);
-  //for(i=0;i<9;i++)
-    temperature[0]=therm_read_byte();
-    temperature[1]=therm_read_byte();
-    
-  mode=temperature[4]& 0x03;
+//  therm_reset();
+//  therm_write_byte(THERM_CMD_SKIPROM);
+//  therm_write_byte(THERM_CMD_RSCRATCHPAD);
+//  //for(i=0;i<9;i++)
+//    temperature[0]=therm_read_byte();
+//    temperature[1]=therm_read_byte();
+//    
+//  mode=temperature[4]& 0x03;
 
   
   therm_reset();
   therm_write_byte(THERM_CMD_SKIPROM);
   therm_write_byte(THERM_CMD_CONVERTTEMP);
-  iReadLimit = 10;
-  while (!therm_read_bit() && (--iReadLimit > 0)) { ; }
+//  THERM_INPUT_MODE();
+//  while(!THERM_READ()){nop();}
+  
+  
+  Delay_ms(750);
+  //iReadLimit = 10;
+  //while (!therm_read_bit() && (--iReadLimit > 0)) { ; }
  // while (!therm_read_bit());
- // Delay_mks((tconv/ (1<<(3-mode))));
+
   
   therm_reset();
   therm_write_byte(THERM_CMD_SKIPROM);
@@ -258,8 +270,8 @@ volatile unsigned char* get_temperature( volatile unsigned char* t)
    for(i=0;i<9;i++)
     temperature[i]=therm_read_byte();
   
-     enableInterrupts();  
-     temperature[0]&= (0xff<<3-mode); //зануляем ненужные биты в зависимости от режима работы
+    // enableInterrupts();  
+    // temperature[0]&= (0xff<<3-mode); //зануляем ненужные биты в зависимости от режима работы
   
   iResult_int  = (temperature[0]         >> 4 ) & 0x0F;  
   iResult_int |= ((temperature[1] & 0x0F) << 4 ) & 0xF0;  

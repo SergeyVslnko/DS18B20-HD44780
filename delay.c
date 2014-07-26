@@ -32,48 +32,34 @@
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 /* Global variables*/
-volatile u32 TimingDelay;
-
-/**
-  ******************************************************************************
-  * @brief Delay before completing the action
-  * @param[in] Delay value in milliseconds
-  * None
-  * @retval void None
-  * @par Required preconditions:
-  * None
-  ******************************************************************************
-  */
-void Delay(u32 nTime)
+//volatile u32 TimingDelay;
+bool TimingDelay;
+void Delay_mks(uint16_t nTime)
 {
-  /* Wait delay elapsed by interrupt update of timingdelay variable*/
-  TimingDelay = nTime;
-  while (TimingDelay != 0);
- /*int i=TimingDelay*10000;
-  for(i;i>0;i--)
-  {
-   nop();
-  }
-    */
+  
+//  TimingDelay=TRUE;
+  TIM3_TimeBaseInit(TIM3_PRESCALER_16,nTime);
+  TIM3_Cmd(ENABLE); 
+  while ((TIM3->SR1&TIM3_SR1_UIF) == 0);
+  TIM3->SR1&=~TIM3_SR1_UIF;
 }
 
-/**
-  ******************************************************************************
-  * @brief Decrement initial value at each interrupt
-  * @param[in]
-  * None
-  * @retval void None
-  * @par Required preconditions:
-  * None
-  ******************************************************************************
-  */
-void TimingDelay_Decrement(void)
+void Delay_ms(uint16_t nTime)
 {
-  if (TimingDelay != 0x00)
-  {
-    TimingDelay--;
-  }
-}
 
+ 
+ // TimingDelay=TRUE;
+ // TIM3_PrescalerConfig(TIM3_PRESCALER_16384,TIM3_PSCRELOADMODE_UPDATE);
+  TIM3_TimeBaseInit(TIM3_PRESCALER_16384,nTime);
+  TIM3_Cmd(ENABLE); 
+  while ((TIM3->SR1 & TIM3_SR1_UIF) == 0);
+  TIM3->SR1&=~TIM3_SR1_UIF;
+}
+void Delay_1muss(void)
+{
+  nop(); nop(); nop(); nop();
+  nop(); nop();
+
+}
 
 /******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/

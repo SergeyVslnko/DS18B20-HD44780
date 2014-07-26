@@ -33,6 +33,7 @@
 /* Exported types ------------------------------------------------------------*/
 void Delay_ms(uint16_t nTime);
 void Delay_mks(uint16_t nTime);
+void Delay_1muss(void);
 #endif /* __DELAY_H */
 
 
